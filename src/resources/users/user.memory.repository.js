@@ -21,7 +21,7 @@ const putUser = async (item) => {
 }
 
 const deleteUser = async (id) => {
-  await db.delete('USERS', {id});
+  await db.delete('USERS', id);
 }
 
 module.exports = { getAll, getById, postUser, putUser, deleteUser };
