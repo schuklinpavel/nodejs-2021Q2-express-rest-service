@@ -1,8 +1,11 @@
-const router = require('express').Router();
-const Board = require('./board.model');
-const boardsService = require('./board.service');
+import express from 'express';
 
-router.route('/').get(async (req, res, next) => {
+import Board from './board.model';
+import boardsService from './board.service';
+
+const router = express.Router();
+
+router.route('/').get(async (_req, res, next) => {
   const boards = await boardsService.getAll();
   if (boards?.length) res.json(boards.map(Board.toResponse));
   else next();
@@ -38,4 +41,4 @@ router.route('/:id').delete(async (req, res) => {
   res.json([]);
 });
 
-module.exports = router;
+export default router;

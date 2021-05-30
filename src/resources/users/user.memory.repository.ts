@@ -1,12 +1,13 @@
-const db = require('../db.js');
+import { IUser } from './user.model';
+import db from '../db';
 
 /**
  * Function call - Get All entity from target table
  * @returns {Promise<User[]>}
  */
-const getAll = async () => {
+const getAll = async () => { // можно прописать : Promise<IUser[]>
   const all = await db.getAll('USERS');
-  return all;
+  return all as IUser[];
 }
 
 /**
@@ -14,9 +15,9 @@ const getAll = async () => {
  * @param {string} id
  * @returns {Promise<User>} entity
  */
-const getById = async (id) => {
+const getById = async (id: string) => {
   const user = await db.getById('USERS', id);
-  return user;
+  return user as IUser;
 };
 
 /**
@@ -24,7 +25,7 @@ const getById = async (id) => {
  * @param {User} item entity
  * @returns {Promise<User>}
  */
-const postUser = async (item) => {
+const postUser = async (item: IUser) => {
   await db.post('USERS', item);
   return item;
 };
@@ -34,9 +35,9 @@ const postUser = async (item) => {
  * @param {User} item entity
  * @returns {Promise<User>} entity
  */
-const putUser = async (item) => {
+const putUser = async (item: IUser): Promise<IUser> => {
   const user = await db.put('USERS', item);
-  return user;
+  return user as IUser;
 }
 
 /**
@@ -44,8 +45,8 @@ const putUser = async (item) => {
  * @param {string} id entity
  * @returns {Promise<void>} entity
  */
-const deleteUser = async (id) => {
+const deleteUser = async (id: string) => {
   await db.delete('USERS', id);
 }
 
-module.exports = { getAll, getById, postUser, putUser, deleteUser };
+export default { getAll, getById, postUser, putUser, deleteUser };

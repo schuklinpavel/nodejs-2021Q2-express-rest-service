@@ -1,18 +1,23 @@
-const router = require('express').Router();
-const Task = require('./task.model');
-const tasksService = require('./task.service');
+import express from 'express';
 
-const getBoardId = (url) => url.replace('/boards/', '').replace('/tasks', '');
+import Task from './task.model';
+import tasksService from './task.service';
 
-router.route('/').get(async (req, res) => {
-  const boardId = getBoardId(req.baseUrl);
-  const tasks = await tasksService.getAll(boardId);
-  res.json(tasks.map(Task.toResponse));
+const router = express.Router();
+
+const getBoardId = (url: string): string => url.replace('/boards/', '').replace('/tasks', '');
+
+
+
+router.route('/').get(async (_req, res) => {
+  const tasks = await tasksService.getAll(); // TS2345 ниже из-за несоот типов, надо as ITask
+  res.json(tasks.map(Task.toResponse)); // TS2345
 });
 
 router.route('/').post(async (req, res) => {
   const boardId = getBoardId(req.baseUrl);
   const { id, title, order, description, userId, columnId } = req.body;
+  // TS2322: Type 'string' is not assignable to type 'null | undefined'. Ошибка возникает на boardId
   const task = await tasksService.postTask(new Task({ boardId, id, title, order, description, userId, columnId }));
   res.status(201);
   res.json(Task.toResponse(task))
@@ -31,7 +36,9 @@ router.route('/:id').get(async (req, res, next) => {
 });
 
 router.route('/:id').put(async (req, res) => {
-  const { boardId, id } = req.params;
+  // const { boardId, id } = req.params; // TS2339: Property 'boardId' does not exist on type 'RouteParameters"/:id">'.
+  const boardId = getBoardId(req.baseUrl);
+  const { id } = req.params;
   const { title, order, description, userId, columnId } = req.body;
   const task = await tasksService.putTask({ boardId, id, title, order, description, userId, columnId });
   res.status(200);
@@ -45,4 +52,4 @@ router.route('/:id').delete(async (req, res) => {
   res.json([]);
 });
 
-module.exports = router;
+export default router;
