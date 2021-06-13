@@ -1,0 +1,34 @@
+version: '3'
+services:
+  node:
+    build: .
+    ports:
+    - ${PORT}:${PORT}
+    depends_on:
+      - postgres
+    environment:
+      - PORT=4000
+    networks:
+      - my-net
+    restart: always
+    volumes:
+    - ./logs:/app/logs
+    - ./src:/app/src
+
+  postgres:
+    build: ./database
+    ports:
+    - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    networks:
+      - my-net
+    restart: always
+    volumes:
+      - /var/lib/postgresql/data:/var/lib/postgresql/data
+
+networks:
+  my-net:
+    driver: bridge
